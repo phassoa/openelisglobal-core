@@ -77,11 +77,12 @@ public class TestModifyUpdate extends BaseAction {
 
         JSONObject obj = (JSONObject)parser.parse(jsonString);
         TestAddParams testAddParams = extractTestAddParms(obj, parser);
-       
+        
+        List<TestSet> testSets = createTestSets(testAddParams);
         Localization nameLocalization = createNameLocalization(testAddParams);
         Localization reportingNameLocalization = createReportingNameLocalization(testAddParams);
         
-        List<TestSet> testSets = createTestSets(testAddParams);
+        LocalizationDAO localizationDAO = new LocalizationDAOImpl();
         TestDAO testDAO = new TestDAOImpl();
         
         TypeOfSampleTestDAO typeOfSampleTestDAO = new TypeOfSampleTestDAOImpl();
@@ -112,20 +113,30 @@ public class TestModifyUpdate extends BaseAction {
         		item.setSysUserId(currentUserId);
         	}
             resultLimitDAO.deleteData(resultLimitItems);
+            
+            nameLocalization.setSysUserId(currentUserId);
+            localizationDAO.insert(nameLocalization);
+            reportingNameLocalization.setSysUserId(currentUserId);
+            localizationDAO.insert(reportingNameLocalization);
         	
             for( TestSet set : testSets){
                 set.test.setSysUserId(currentUserId);
                 set.test.setLocalizedTestName(nameLocalization);
                 set.test.setLocalizedReportingName(reportingNameLocalization);
                 
+                // gnr: test for existance of test(sampleType), if not insert
+               
+                if (set.test.getId() == null) {
+                	testDAO.insertData(set.test);
+                	set.sortedTests.add(set.test);
+                }
+                
 //	gnr: based on testAddUpdate, 
 //  added existing testId to process in createTestSets using testAddParams.testId, delete then insert to modify for most elements
               
                 for( Test test :set.sortedTests){
                     test.setSysUserId(currentUserId);
-                    //if (!test.getId().equals( set.test.getId() )) {
-                    	testDAO.updateData(test);
-                    //}
+                    testDAO.updateData(test);
                 }
                 
             	updateTestNames(testAddParams.testId, nameLocalization.getEnglish(), nameLocalization.getFrench(), reportingNameLocalization.getEnglish(), reportingNameLocalization.getFrench(), currentUserId);
@@ -268,10 +279,20 @@ public class TestModifyUpdate extends BaseAction {
             if (typeOfSample == null) {
                 continue;
             }
-            TestSet testSet = new TestSet();
-            Test test = new Test();
+            
+           TypeOfSampleTestDAOImpl typeOfSampleTestDAOImpl = new TypeOfSampleTestDAOImpl();
+           TypeOfSampleTest typeOfSampleTestExists = typeOfSampleTestDAOImpl.getTypeOfSampleTestForTest(testAddParams.testId);
+          
+           TestSet testSet = new TestSet();
+           Test test = new Test();
            
-            test.setId(testAddParams.testId);
+           if ( typeOfSampleTestExists.getTypeOfSampleId().equals(typeOfSample.getId()) ) {
+        	   test.setId(testAddParams.testId);
+           }
+            
+//            Test testExists = new Test();
+//            TestDAOImpl testDAOImpl = new TestDAOImpl();
+//            testExists = testDAOImpl.getTestById(testAddParams.testId);
             
             test.setUnitOfMeasure(uom);
             test.setDescription(testAddParams.testNameEnglish + "(" + typeOfSample.getDescription() + ")");

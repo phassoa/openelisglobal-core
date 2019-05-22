@@ -503,11 +503,11 @@
         var response = xhr.responseXML.getElementsByTagName("formfield").item(0);
         var tests = response.getElementsByTagName("test");
         var sampleTypeId = getValueFromXmlElement(response, "sampleTypeId");
-        var test, name, modName, id, modId;
+        var test, name, modName, id, modId, found = false;
         var ul = $jq(document.createElement("ul"));
         var length = tests.length;
         ul.addClass("sortable sortable-tag");
-
+        
         for (var i = 0; i < length; ++i) {
             test = tests[i];
             name = getValueFromXmlElement(test, "name");
@@ -521,16 +521,19 @@
             id = getValueFromXmlElement(test, "id");
             if (name != modName ) {
             	ul.append(createLI(id, name, false));
-            } else {
+            } else if (found == false) {
             	ul.append(createLI(id, name, true));
+            	found = true;
             }
         }
-
-        <%if (locale.equals("en_US")) {%>
-        //ul.append( createLI(modId, $jq("#testNameEnglish").val(), true) );
-        <%} else {%>
-        //ul.append( createLI(modId, $jq("#testNameFrench").val(), true) );
-        <%}%>
+        
+        if (found == false) {
+        	<%if (locale.equals("en_US")) {%>
+        		ul.append( createLI(0, $jq("#testNameEnglish").val(), true) );
+        	<%} else {%>
+        		ul.append( createLI(0, $jq("#testNameFrench").val(), true) );
+        	<%}%>
+        }
 
         $jq("#sort" + sampleTypeId).append(ul);
 
@@ -905,8 +908,10 @@
 			var sampleTypeData = {value:sampleTypeId, type:"add"};
 			//Triggered manualy, non-event. Added test for undefined event object in createOrderBoxForSampleType
 			//because "change" triggers extra call
-            createOrderBoxForSampleType(sampleTypeData);
-			$jq("#sampleTypeSelection").change();
+			if (sampleTypeId != null) {
+            	createOrderBoxForSampleType(sampleTypeData);
+				$jq("#sampleTypeSelection").change();
+			}
 			$jq("#nextButton").prop("disabled", false);	
 
         } else if (step == 'step2') {

@@ -92,26 +92,23 @@ public class PrintWorkplanReportAction extends BaseAction {
 				
 		//set Jasper report file name
 		String reportFileName = workplanReport.getFileName();
-		String reportFile = this.getServlet().getServletConfig().getServletContext().getRealPath("WEB-INF/reports/" + reportFileName + ".jasper");
+		//String reportFile = this.getServlet().getServletConfig().getServletContext().getRealPath("WEB-INF/reports/" + reportFileName + ".jasper");
+		String reportFile = getServlet().getServletContext().getRealPath("") + "/WEB-INF/reports/" + reportFileName + ".jasper";
 						
 	    try {
-	        	
+
 	        byte[] bytes = null;
-			 
 			JRDataSource dataSource = createReportDataSource(workplanRows);
 			bytes = JasperRunManager.runReportToPdf(reportFile, parameterMap, dataSource);
-				
 			ServletOutputStream servletOutputStream = response.getOutputStream();
 			response.setContentType("application/pdf");
 			response.setContentLength(bytes.length);
-
 			servletOutputStream.write(bytes, 0, bytes.length);
 			servletOutputStream.flush();
-			servletOutputStream.close();	
-	
+			servletOutputStream.close();
 	    }
 	    catch (JRException jre) {
-	    	LogEvent.logError("PringWorkplanReportAction","processRequest()", jre.toString());
+	    	LogEvent.logError("PrintWorkplanReportAction","processRequest()", jre.toString());
 	    	error = new ActionError("error.jasper", null, null);
 	    } catch (Exception e) {
 	    	LogEvent.logError("PrintWorkplanReportAction","processRequest()", e.toString());
