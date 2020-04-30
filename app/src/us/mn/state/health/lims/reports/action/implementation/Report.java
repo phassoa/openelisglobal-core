@@ -59,7 +59,7 @@ public abstract class Report implements IReportCreator {
 	protected String requestedReport;
 	private String fullReportFilename;
 
-	@Override
+	//@Override
 	public void setRequestedReport(String report) {
 		requestedReport = report;
 	}
@@ -68,10 +68,12 @@ public abstract class Report implements IReportCreator {
 		initialized = true;
 	}
 
+	//@Override
 	public String getResponseHeaderName() {
 		return null;
 	}
 
+	//@Override
 	public String getResponseHeaderContent() {
 		return null;
 	}
@@ -79,6 +81,7 @@ public abstract class Report implements IReportCreator {
 	/**
 	 * @see us.mn.state.health.lims.reports.action.implementation.IReportCreator#getContentType()
 	 */
+	//@Override
 	public String getContentType() {
 		return "application/pdf; charset=UTF-8";
 	}
@@ -105,7 +108,7 @@ public abstract class Report implements IReportCreator {
 		reportParameters.put("localization", createLocalizationMap());
 		//reportParameters.put("leftHeaderImage", getImage("headerLeftImage"));
 		//reportParameters.put("rightHeaderImage", getImage("headerRightImage"));
-		
+
 		reportParameters.put("REPORT_LOCALE", SystemConfiguration.getInstance()
 				.getDefaultLocale());
 	}
@@ -118,7 +121,7 @@ public abstract class Report implements IReportCreator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return map
 	 * @deprecated The correct way to localize JasperReports is to us $R{key}.
 	 *             This was put in before the correct way was understood. Do not
@@ -138,6 +141,7 @@ public abstract class Report implements IReportCreator {
 				StringUtil.getMessageForKey("report.reception"));
 		localizationMap.put("initialResults",
 				StringUtil.getMessageForKey("report.initialResults"));
+		localizationMap.put("results", StringUtil.getMessageForKey("report.results"));
 		localizationMap.put("confirmationResults",
 				StringUtil.getMessageForKey("report.confirmationResult"));
 		localizationMap.put("requesterContact",
@@ -250,6 +254,7 @@ public abstract class Report implements IReportCreator {
 				StringUtil.getMessageForKey("report.activity"));
 		localizationMap.put("from", StringUtil.getMessageForKey("report.from"));
 		localizationMap.put("to", StringUtil.getMessageForKey("report.to"));
+		localizationMap.put("of", StringUtil.getMessageForKey("report.of"));
 		localizationMap.put("printed",
 				StringUtil.getMessageForKey("report.printed"));
 		localizationMap.put("techId",
@@ -300,7 +305,6 @@ public abstract class Report implements IReportCreator {
 		return localizationMap;
 	}
 
-	@Override
 	public byte[] runReport() throws Exception {
 		return JasperRunManager.runReportToPdf(fullReportFilename,
 				getReportParameters(), getReportDataSource());
@@ -321,7 +325,7 @@ public abstract class Report implements IReportCreator {
 	/**
 	 * Utility routine for a sequence done in many places. Adds a message to the
 	 * errorMsgs
-	 * 
+	 *
 	 * @param messageId
 	 *            - name of resource
 	 */
@@ -335,7 +339,7 @@ public abstract class Report implements IReportCreator {
 	/**
 	 * Utility routine for a sequence done in many places. Adds a message to the
 	 * errorMsgs
-	 * 
+	 *
 	 * @param messageId
 	 *            - name of resource
 	 */
@@ -349,7 +353,7 @@ public abstract class Report implements IReportCreator {
 	/**
 	 * Checks a given date to make sure it is ok, filling in with a default if
 	 * not found, logging a message, if there is a problem.
-	 * 
+	 *
 	 * @param checkDateStr
 	 *            - date to check
 	 * @param defaultDateStr
@@ -419,7 +423,7 @@ public abstract class Report implements IReportCreator {
 		 * If you need to compare a Date which started as a date string to a
 		 * bunch of timestamps, you should move it from 00:00 at the beginning
 		 * of the day to the end of the day at 23:59:59.999.
-		 * 
+		 *
 		 * @return the high date with time set to the end of the day.
 		 */
 		public Date getHighDateAtEndOfDay() {
@@ -438,7 +442,7 @@ public abstract class Report implements IReportCreator {
 		 * <li>High date picks up low date if it ain't filled in,
 		 * <li>they can't both be empty
 		 * <li>they have to be well formed.
-		 * 
+		 *
 		 * @return true if valid, false otherwise
 		 */
 		public boolean validateHighLowDate(String missingDateMessage) {
@@ -459,6 +463,8 @@ public abstract class Report implements IReportCreator {
 			return true;
 		}
 
+		//@Override
+		@Override
 		public String toString() {
 			String range = lowDateStr;
 			try {

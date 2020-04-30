@@ -41,16 +41,16 @@ import us.mn.state.health.lims.test.valueholder.TestSection;
  * The contents of this file are subject to the Mozilla Public License Version
  * 1.1 (the "License"); you may not use this file except in compliance with the
  * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is OpenELIS code.
- * 
+ *
  * Copyright (C) CIRG, University of Washington, Seattle WA. All Rights
  * Reserved.
- * 
+ *
  */
 public abstract class IndicatorAllTest extends IndicatorReport implements IReportCreator,
 		IReportParameterSetter {
@@ -66,11 +66,13 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 		USER_TEST_SECTION_ID = new TestSectionDAOImpl().getTestSectionByName("user").getId();
 	}
 
+	//@Override
 	@Override
 	protected String reportFileName() {
 		return "LabAggregate";
 	}
 
+	@Override
 	public JRDataSource getReportDataSource() throws IllegalStateException {
 		return errorFound ? new JRBeanCollectionDataSource(errorMsgs) : new JRBeanCollectionDataSource(reportItems);
 	}
@@ -106,7 +108,7 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 			bucket.testSort = Integer.parseInt(test.getSortOrder());
 			bucket.testSection = test.getTestSection().getLocalizedName();
 			bucket.sectionSort = test.getTestSection().getSortOrderInt();
-			
+
 			testNameToBucketList.put( TestService.getUserLocalizedReportingTestName( test ), bucket);
 			testBucketList.add(bucket);
 		}
@@ -278,7 +280,7 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
                StatusService.getInstance().matches( analysis.getStatusId(), AnalysisStatus.TechnicalRejected ) ||
                StatusService.getInstance().matches( analysis.getStatusId(), AnalysisStatus.BiologistRejected );
 	}
-	
+
 	private void mergeLists() {
         Map<String, TestSection> testSectionMap = getTestSectionNameMap();
 
@@ -301,14 +303,14 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 		}
 
 		Collections.sort(testBucketList, new Comparator<TestBucket>() {
-			@Override
+			//@Override
 			public int compare(TestBucket o1, TestBucket o2) {
 				int order = o1.sectionSort - o2.sectionSort;
-				
+
 				if( order == 0){
 					order = o1.testSort - o2.testSort;
 				}
-				
+
 				return order;
 			}
 
@@ -337,9 +339,11 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
         return testSectionMap;
     }
 
-    @Override
+    //@Override
+	@Override
 	protected String getNameForReportRequest() {
-		return StringUtil.getMessageForKey("openreports.all.tests.aggregate");
+		return "";
+//		return StringUtil.getMessageForKey("openreports.all.tests.aggregate");
 	}
 
 	private void setTestAggregates() {
@@ -368,10 +372,11 @@ public abstract class IndicatorAllTest extends IndicatorReport implements IRepor
 		public int finishedCount = 0;
 	}
 
+	//@Override
 	@Override
 	protected String getNameForReport() {
 		return StringUtil.getContextualMessageForKey("openreports.all.tests.aggregate");
 	}
 
-    
+
 }

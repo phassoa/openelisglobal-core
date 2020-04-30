@@ -45,7 +45,7 @@ public class TestResultItem implements ResultItem, Serializable{
 	 * Used for inserting Patient Names/o into lists of TestResultItems
 	 */
 	private boolean isServingAsTestGroupIdentifier = false;
-	
+
     private static String NO = "no";
 	@SuppressWarnings("unused")
 	private static String YES = "yes";
@@ -106,11 +106,11 @@ public class TestResultItem implements ResultItem, Serializable{
 	private boolean readOnly = false;
 	private boolean referredOut = false;
 	private boolean referralCanceled = false;
-    
+
 	//This is the workaround for the checkbox stickiness issue
     private boolean shadowReferredOut = false;
     private boolean shadowRejected = false;
-    
+
 	private String referralId = "";
 	private String referralReasonId = "";
 	private String multiSelectResultValues;
@@ -133,7 +133,9 @@ public class TestResultItem implements ResultItem, Serializable{
     private boolean rejected = false;
     private String rejectReasonId;
     private String considerRejectReason;
-	
+
+	private String defaultTestResultId;
+
     public String getConsiderRejectReason() {
         return considerRejectReason;
     }
@@ -205,14 +207,14 @@ public class TestResultItem implements ResultItem, Serializable{
     public void setShadowReferredOut( boolean shadowReferredOut ){
         this.shadowReferredOut = shadowReferredOut;
     }
-    
+
     public boolean isShadowRejected() {
         return shadowRejected;
     }
     public void setShadowRejected(boolean shadowRejected) {
         this.shadowRejected = shadowRejected;
     }
-    
+
     public String getTechnicianSignatureId() {
 		return technicianSignatureId;
 	}
@@ -298,7 +300,7 @@ public class TestResultItem implements ResultItem, Serializable{
 	public void setLowerAbnormalRange(double lowerAbnormalRange) {
 		this.lowerAbnormalRange = lowerAbnormalRange;
 	}
-	
+
 	public String getReportable() {
 		return reportable ? "Y" : "N";
 	}
@@ -434,7 +436,7 @@ public class TestResultItem implements ResultItem, Serializable{
 	public List<IdValuePair> getDictionaryResults() {
 		return dictionaryResults == null ? new ArrayList<IdValuePair>() : dictionaryResults;
 	}
-	
+
 	public String getResultLimitId() {
 		return resultLimitId;
 	}
@@ -482,7 +484,7 @@ public class TestResultItem implements ResultItem, Serializable{
 	public Result getResult() {
 		return result;
 	}
-	
+
 	public void setUserChoiceReflex(boolean isUserChoiceReflex) {
 		this.isUserChoiceReflex = isUserChoiceReflex;
 	}
@@ -557,7 +559,6 @@ public class TestResultItem implements ResultItem, Serializable{
 	public String getPastNotes() {
 		return pastNotes;
 	}
-	@Override
 	public String getSequenceAccessionNumber() {
 		return getAccessionNumber() + "-" + getSequenceNumber();
 	}
@@ -673,6 +674,14 @@ public class TestResultItem implements ResultItem, Serializable{
     public void setNationalId(String nationalId) {
         this.nationalId = nationalId;
     }
+
+	public String getDefaultTestResultId() {
+		return defaultTestResultId;
+	}
+
+	public void setDefaultTestResultId(String defaultTestResultId) {
+		this.defaultTestResultId = defaultTestResultId;
+	}
 
 
 }

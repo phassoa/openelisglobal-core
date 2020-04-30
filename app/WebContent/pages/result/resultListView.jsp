@@ -171,7 +171,9 @@ $jq(document).ready( function() {
             $jq(".asmContainer").css("display","inline-block");
             disableRejectedResults();
             showCachedRejectionReasonRows();
-			});
+            
+            $jq(".testResultSelectList").change();
+	});
 
 
 function /*void*/ makeDirty(){
@@ -762,10 +764,12 @@ function updateShadowResult(source, index){
 		<logic:notEqual name="testResult" property="resultDisplayType" value="HIV"><logic:notEqual name="testResult" property="resultDisplayType" value="SYPHILIS">
 			<td style="vertical-align:middle" class="ruled">
                 <%= testResult.getTestName() %>
-				<logic:notEmpty  name="testResult"  property="normalRange" >
-					<br/><bean:write name="testResult" property="normalRange"/>&nbsp;
-					<bean:write name="testResult" property="unitsOfMeasure"/>
-				</logic:notEmpty>
+                <logic:notEqual name="testResult" property="resultType" value="D"> 
+					<logic:notEmpty  name="testResult"  property="normalRange" >
+						<br/><bean:write name="testResult" property="normalRange"/>&nbsp;
+						<bean:write name="testResult" property="unitsOfMeasure"/>
+					</logic:notEmpty>
+                </logic:notEqual>
 			</td>
 		</logic:notEqual></logic:notEqual>
 
@@ -834,9 +838,10 @@ function updateShadowResult(source, index){
 						                " updateShadowResult(this, " + index + ");"%>'
 						  />
 			</logic:equal>
-			<% if( "D".equals(testResult.getResultType())  ){ %>
+			<% if( "D".equals(testResult.getResultType()) ){  %>
 			<!-- dictionary results -->
 			<select name="<%="testResult[" + index + "].resultValue" %>"
+					class="testResultSelectList"
 			        onchange="<%="markUpdated(" + index + ", " + testResult.isUserChoiceReflex() +  ", \'" + testResult.getSiblingReflexKey() + "\');"   +
 						               ((noteRequired && !"".equals(testResult.getResultValue()) )? "showNote( " + index + ");" : "") +
 						               (testResult.getQualifiedDictionaryId() != null ? "showQuanitiy( this, "+ index + ", " + testResult.getQualifiedDictionaryId() + ", 'D');" :"") +
@@ -845,7 +850,11 @@ function updateShadowResult(source, index){
 			        <%=testResult.isReadOnly()? "disabled=\'true\'" : "" %> >
 					<option value="0"></option>
 					<logic:iterate id="optionValue" name="testResult" property="dictionaryResults" type="IdValuePair" >
-						<option value='<%=optionValue.getId()%>'  <%if(optionValue.getId().equals(testResult.getResultValue())) out.print("selected"); %>  >
+						<option value='<%=optionValue.getId()%>'  
+						  <%if(optionValue.getId().equals(testResult.getResultValue()) || optionValue.getId().equals(testResult.getDefaultTestResultId()) && GenericValidator.isBlankOrNull(testResult.getResultValue())) {  %>
+							  selected='selected'
+						  <% } %>
+						>
 							<bean:write name="optionValue" property="value"/>
 						</option>
 					</logic:iterate>
